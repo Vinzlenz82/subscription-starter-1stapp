@@ -2,15 +2,13 @@
 
 import Link from 'next/link';
 import { SignOut } from '@/utils/auth-helpers/server';
-import { createClient, handleRequest } from '@/utils/auth-helpers/client';
+import {  handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import s from './Navbar.module.css';
-import { getSubscription } from '@/utils/supabase/queries';
-import { useEffect, useState } from 'react';
 
-const supabase = createClient();
+
 interface NavlinksProps {
   user?: any;
 }
@@ -18,15 +16,7 @@ interface NavlinksProps {
 export default function Navlinks({ user }: NavlinksProps) {
   const router = getRedirectMethod() === 'client' ? useRouter() : null;
 
-  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
-
-  useEffect(() => {
-    const checkSubscription = async () => {
-      const subscription = await getSubscription(supabase);
-      setHasActiveSubscription(subscription?.status === 'trialing' || subscription?.status === 'active');
-    };
-    if (user) checkSubscription();
-  }, [user]);
+  
 
   return (
     <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
@@ -43,11 +33,7 @@ export default function Navlinks({ user }: NavlinksProps) {
               Account
             </Link>
           )}
-          {user && hasActiveSubscription && (
-            <Link href="/my-product" className={s.link}>
-              My Product
-            </Link>
-          )}
+
         </nav>
       </div>
       <div className="flex justify-end space-x-8">
